@@ -1,0 +1,31 @@
+{
+  "name": "dopp",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A drop-in proxy for Jev-compatible decision APIs that keeps every request and trains small open models on them.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "dashboard"
+  ],
+  "scripts": {
+    "build": "npm run build -w dashboard",
+    "db:migrate": "wrangler d1 migrations apply DB --local -c worker/wrangler.toml",
+    "dev": "npm run build && npm run db:migrate && wrangler dev -c worker/wrangler.toml --port ${PORT:-8787}",
+    "deploy:db": "wrangler d1 migrations apply DB --remote -c worker/wrangler.toml",
+    "deploy": "npm run build && wrangler deploy -c worker/wrangler.toml",
+    "test": "npm run build && node scripts/smoke.mjs",
+    "trainer": "uv run engines/tiny_local.py",
+    "example:home-assistant": "npm run build && node examples/home-assistant/run.mjs",
+    "example:gatekeeper": "npm run build && npm install --prefix examples/gatekeeper --no-audit --no-fund --silent && node examples/gatekeeper/run.mjs",
+    "example:gatekeeper:page": "node examples/gatekeeper/serve.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.143.0"
+  },
+  "overrides": {
+    "undici": "^7.29.1"
+  }
+}

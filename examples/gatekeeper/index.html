@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The guard's brain</title>
+<style>
+  :root { --paper: #f6f7f9; --ink: #151a24; --muted: #5b6475; --line: #dce1e9; --go: #0b7a53; --bar: #cfe9dc; color-scheme: light; }
+  @media (prefers-color-scheme: dark) { :root { --paper: #0d1117; --ink: #e6edf3; --muted: #8e98a8; --line: #262d39; --go: #56d364; --bar: #1d3b2a; color-scheme: dark; } }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 40px 16px; }
+  main { max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+  h1 { margin: 0; font-size: 26px; }
+  p { margin: 0; color: var(--muted); }
+  form { display: flex; gap: 8px; }
+  input { flex: 1; min-width: 0; font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--ink); }
+  button { font: inherit; padding: 10px 16px; border: 0; border-radius: 8px; background: var(--go); color: var(--paper); font-weight: 600; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: grid; grid-template-columns: 90px 1fr 56px; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
+  .bar { height: 10px; border-radius: 5px; background: var(--line); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--go); }
+  .top { font-weight: 600; }
+  code { font-size: .9em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>The guard's brain</h1>
+  <p>A traveller speaks; a 34 MB model trained with Dopp reads how they're trying to get past the gate. It runs in this tab: once it
+  has loaded, nothing you type leaves your browser.</p>
+  <p id="status">Loading the model from <code>./model/</code>…</p>
+  <form id="f">
+    <input id="line" autocomplete="off" placeholder="Evening, friend. I brought you a meat pie." aria-label="What the traveller says" disabled>
+    <button id="go" disabled>Ask</button>
+  </form>
+  <div id="out"></div>
+</main>
+<script type="module">
+  import { load } from "../../browser/tiny.js";
+  const $ = (id) => document.getElementById(id);
+  let model;
+  try {
+    model = await load("./model/", { onProgress: (p) => { if (p.status === "download") $("status").textContent = `Loading the model… ${(p.loaded / 1e6).toFixed(1)} MB`; } });
+    $("status").textContent = `${model.name}: ${(model.bytes / 1e6).toFixed(0)} MB, loaded in ${(model.loadMs / 1000).toFixed(1)} s.`;
+    $("line").disabled = $("go").disabled = false; $("line").focus();
+  } catch (e) { $("status").textContent = "Couldn't load the model: " + e.message + ". Run npm run example:gatekeeper first."; }
+  $("f").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = $("line").value.trim() || $("line").placeholder, r = await model.decide(text);
+    $("out").innerHTML = Object.entries(r.probabilities).sort((a, b) => b[1] - a[1]).map(([o, p]) =>
+      `<div class="row ${o === r.choice ? "top" : ""}"><span>${o}</span><span class="bar"><i style="width:${(p * 100).toFixed(1)}%"></i></span><span>${(p * 100).toFixed(1)}%</span></div>`).join("")
+      + `<p>${r.ms.toFixed(1)} ms, ${r.tokens} tokens</p>`;
+  });
+</script>
+</body>
+</html>

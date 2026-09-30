@@ -1,0 +1,217 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --paper: #FBFBF9;
+    --surface: #FFFFFF;
+    --panel: #F1F1EE;
+    --ink: #141B2D;
+    --slate: #5B6478;
+    --line: #DEDFE2;
+    --go: #1B7F51;
+    --go-soft: #E2F1E9;
+    --wait: #A8721A;
+    --wait-soft: #FAF0DA;
+    --stop: #AE3527;
+    --stop-soft: #FBE8E5;
+    --accent: #2B4CA8;
+    --accent-soft: #E7ECF9;
+    --k1: #2B4CA8; --k1-soft: #E3E9F8;
+    --k2: #AE3527; --k2-soft: #FBE3DF;
+    --k3: #1B7F51; --k3-soft: #DDF0E6;
+    --k4: #A8721A; --k4-soft: #F8ECD2;
+    --k5: #7440A8; --k5-soft: #EFE5F8;
+    --k6: #177A86; --k6-soft: #DDF1F3;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0F1218;
+      --surface: #161A22;
+      --panel: #1C212B;
+      --ink: #ECEDE9;
+      --slate: #98A0B0;
+      --line: #2A303C;
+      --go: #4CC48A;
+      --go-soft: #14301F;
+      --wait: #E0A33A;
+      --wait-soft: #31280F;
+      --stop: #F08A7E;
+      --stop-soft: #33100C;
+      --accent: #7CA0F0;
+      --accent-soft: #182339;
+      --k1: #7CA0F0; --k1-soft: #1C2A4A;
+      --k2: #F08A7E; --k2-soft: #3A1712;
+      --k3: #4CC48A; --k3-soft: #153322;
+      --k4: #E0A33A; --k4-soft: #382B10;
+      --k5: #B98AF0; --k5-soft: #2A1C40;
+      --k6: #5CC4D0; --k6-soft: #12313A;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #0F1218;
+    --surface: #161A22;
+    --panel: #1C212B;
+    --ink: #ECEDE9;
+    --slate: #98A0B0;
+    --line: #2A303C;
+    --go: #4CC48A;
+    --go-soft: #14301F;
+    --wait: #E0A33A;
+    --wait-soft: #31280F;
+    --stop: #F08A7E;
+    --stop-soft: #33100C;
+    --accent: #7CA0F0;
+    --accent-soft: #182339;
+    --k1: #7CA0F0; --k1-soft: #1C2A4A;
+    --k2: #F08A7E; --k2-soft: #3A1712;
+    --k3: #4CC48A; --k3-soft: #153322;
+    --k4: #E0A33A; --k4-soft: #382B10;
+    --k5: #B98AF0; --k5-soft: #2A1C40;
+    --k6: #5CC4D0; --k6-soft: #12313A;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body, #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", "Plex Fallback", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+
+  a { color: inherit; text-decoration: none; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  input, textarea, select, button { font: inherit; color: inherit; }
+
+  ::placeholder { color: var(--slate); opacity: .75; }
+}
+
+@layer components {
+  .page-title {
+    font-family: "Newsreader", "Newsreader Fallback", Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  .skel {
+    background: var(--line);
+    border-radius: 3px;
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .skel { animation: skelpulse 1.4s ease-in-out infinite; }
+  }
+
+  @keyframes skelpulse { 50% { opacity: .45; } }
+
+  /* a request that just arrived on the Requests page */
+  @keyframes freshfade { from { background-color: var(--accent-soft); } to { background-color: transparent; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .fresh { animation: freshfade 4s ease-out; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fresh { box-shadow: inset 3px 0 0 var(--accent); }
+  }
+
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .scroll-x::-webkit-scrollbar { height: 9px; }
+  .scroll-x::-webkit-scrollbar-thumb { background: var(--line); border-radius: 5px; }
+
+  .clamp-2 {
+    display: -webkit-box !important;   /* a Tailwind display utility on the same element must not undo the clamp */
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* nothing wider than its box on a phone */
+select { max-width: 100%; }
+pre { max-width: 100%; overflow-x: auto; }
+
+/* ---------- motion (all of it off under prefers-reduced-motion) ---------- */
+/* expand/collapse by animating the grid row from 0fr to 1fr: works for any content height */
+.nav-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .22s ease; }
+.nav-collapse-open { grid-template-rows: 1fr; }
+.nav-collapse > div { min-height: 0; }
+/* once collapsed, the links are really gone (not just clipped): no clicks, no screen reader, no tab stop */
+.nav-collapse:not(.nav-collapse-open) > div { visibility: hidden; transition: visibility 0s .22s; }
+.nav-sub { position: relative; }
+.nav-sub-on::before { content: ""; position: absolute; left: -9px; top: 6px; bottom: 6px; width: 2px; border-radius: 2px; background: var(--go); }
+
+/* phone menu: a sheet that slides in over the page */
+.sheet { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+.sheet-open { pointer-events: auto; }
+.sheet-backdrop { position: absolute; inset: 0; background: rgb(0 0 0 / .5); opacity: 0; transition: opacity .2s ease; border: 0; }
+.sheet-open .sheet-backdrop { opacity: 1; }
+.sheet-panel { position: absolute; top: 0; bottom: 0; left: 0; width: min(84vw, 320px); border-right: 1px solid var(--line); transform: translateX(-100%); transition: transform .26s cubic-bezier(.2, .8, .2, 1); box-shadow: 0 0 40px rgb(0 0 0 / .35); }
+.sheet-open .sheet-panel { transform: none; }
+
+/* the side drawer (Setup's cards open in it) */
+@keyframes drawerin { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fadein { from { opacity: 0; } }
+.drawer-panel { animation: drawerin .22s cubic-bezier(.2, .8, .2, 1); }
+.drawer-backdrop { animation: fadein .2s ease; }
+
+/* pages fade up a little as they arrive */
+@keyframes pageenter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.page-enter { animation: pageenter .28s ease-out; }
+
+/* buttons and tappable things give a little on press */
+.press, button:not(:disabled), a[class*="rounded"] { transition-property: color, background-color, border-color, opacity, transform; }
+button:not(:disabled):active, .press:active { transform: scale(.97); }
+
+/* sign-in: soft green light behind the card; the check pops in when the link is sent */
+.signin-bg { background: radial-gradient(ellipse 60% 45% at 50% 0%, color-mix(in srgb, var(--go) 14%, transparent), transparent 70%), var(--paper); }
+@keyframes checkpop { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+.signin-check { animation: checkpop .45s cubic-bezier(.2,.8,.2,1); }
+
+/* bars fill in on arrival */
+@keyframes bargrow { from { transform: scaleX(0); } }
+.bar-grow { transform-origin: left; animation: bargrow .7s cubic-bezier(.2,.8,.2,1); }
+
+/* the logo's overlap breathes while something is running */
+@keyframes lensbreathe { 50% { opacity: .55; } }
+.logo-live { animation: lensbreathe 1.8s ease-in-out infinite; }
+.logo:hover .logo-lens { filter: drop-shadow(0 0 4px var(--go)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-collapse, .sheet-backdrop, .sheet-panel { transition: none; }
+  .page-enter, .logo-live, .bar-grow, .signin-check, .drawer-panel, .drawer-backdrop { animation: none; }
+  button:active, .press:active { transform: none; }
+}
+
+/* the setup graph (React Flow) in the app's tokens, both themes */
+.setup-graph .react-flow__controls { box-shadow: none; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.setup-graph .react-flow__controls-button { background: var(--surface); border-bottom: 1px solid var(--line); fill: var(--ink); color: var(--ink); }
+.setup-graph .react-flow__controls-button:hover { background: var(--panel); }
+.setup-graph .react-flow__edge-path { stroke: var(--slate); }
+.setup-graph .react-flow__arrowhead polyline, .setup-graph marker path { stroke: var(--slate); fill: var(--slate); }
+.setup-graph .react-flow__pane { cursor: grab; }

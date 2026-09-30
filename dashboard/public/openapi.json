@@ -1,0 +1,82 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Dopp API",
+  "version": "1",
+  "description": "Drop-in proxy for Jev-compatible decision APIs. Same request and reply as POST /v1/systemone; every request is kept and can train a model for its route. Docs: http://localhost:8787/docs.md"
+ },
+ "servers": [
+  {
+   "url": "http://localhost:8787"
+  }
+ ],
+ "paths": {
+  "/v1/systemone": {
+   "post": {
+    "summary": "Answer typed questions about a state",
+    "description": "Identical to TypeSafe's /v1/systemone. Bearer: a Dopp route key (us_…) made in this server's dashboard; nothing else is accepted. Optional header x-jev-key forwards the caller's own TypeSafe key for that request only (never stored).",
+    "security": [
+     {
+      "bearer": []
+     }
+    ],
+    "requestBody": {
+     "required": true,
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object",
+        "required": [
+         "state",
+         "questions"
+        ],
+        "properties": {
+         "model": {
+          "type": "string",
+          "description": "jev-latest (default) or an upstream id from the account's catalog"
+         },
+         "state": {
+          "description": "the text or JSON to decide about"
+         },
+         "questions": {
+          "type": "object",
+          "description": "question id → {type: choice|yes_no|score|…, instructions, criteria}"
+         }
+        }
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "answers per question with probabilities; understudy.served says who answered",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "missing or revoked key"
+     },
+     "402": {
+      "description": "a guest account's allowance is spent"
+     },
+     "429": {
+      "description": "over 120 requests a minute on one key"
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "securitySchemes": {
+   "bearer": {
+    "type": "http",
+    "scheme": "bearer"
+   }
+  }
+ }
+}

@@ -1,0 +1,17 @@
+node_modules/
+dashboard/dist/
+.wrangler/
+worker/.wrangler/
+worker/.dev.vars
+.dev.vars
+__pycache__/
+*.pyc
+*.onnx
+*.onnx.data
+kev-repo/
+dashboard/public/laya/
+examples/gatekeeper/model/
+.DS_Store
+.venv/
+*.log
+*.sqlite

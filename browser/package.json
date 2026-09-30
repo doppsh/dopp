@@ -1,0 +1,5 @@
+{
+  "type": "module",
+  "private": true,
+  "description": "The in-browser runtimes: tiny.js (a Tiny offline folder) and laya-web.js (Laya on WebGPU)."
+}

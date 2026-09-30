@@ -1,0 +1,9 @@
+{
+  "name": "dopp-example-gatekeeper",
+  "private": true,
+  "description": "What examples/gatekeeper/check.mjs needs to run the browser loader in Node.",
+  "type": "module",
+  "dependencies": {
+    "onnxruntime-web": "1.20.1"
+  }
+}

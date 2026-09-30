@@ -1,0 +1,58 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke:
+    name: npm test (sign-in, proxy, request log, docs, strangers kept out)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  home-assistant:
+    name: examples/home-assistant (requests in, Tiny trained on CPU, offline folder answering)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.cache/huggingface
+          key: tiny-${{ runner.os }}-${{ hashFiles('engines/tiny_local.py') }}
+      - run: npm ci
+      - run: npm run build
+      - run: npm run example:home-assistant
+
+  gatekeeper:
+    name: examples/gatekeeper (Tiny trained on CPU; the browser loader checked against serve.py)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.cache/huggingface
+          key: tiny-${{ runner.os }}-${{ hashFiles('engines/tiny_local.py') }}
+      - run: npm ci
+      - run: npm run build
+      - run: npm run example:gatekeeper

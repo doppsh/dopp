@@ -1,0 +1,27 @@
+# Copy to worker/.dev.vars for `npm run dev`. Wrangler reads it locally and never uploads it.
+# For a deployed Worker, set each of these with `npx wrangler secret put <NAME> -c worker/wrangler.toml` instead.
+# Names only; fill in your own values.
+
+# The dashboard's password (at least 12 characters). There is one operator and no sign-up.
+ADMIN_PASSWORD=
+# Encrypts the provider keys you paste into the dashboard (AES-GCM). Any long random string; keep it stable.
+KEY_SECRET=
+
+# Who answers by default: Jev (TypeSafe). Set one of these or requests have nobody to answer them.
+# TYPESAFE_API_KEY: your TypeSafe key. JEV_URL: any Jev-compatible server instead (your own, or a local stub while developing).
+TYPESAFE_API_KEY=
+# JEV_URL=http://127.0.0.1:8799/v1/systemone
+
+# The engines' shared secret: any long random string. With Modal, the same value as UNDERSTUDY_SECRET in the Modal secret.
+MODAL_SECRET=
+# Tiny on this machine's CPU (`npm run trainer`, see README.md):
+# TINY_ENGINE_URL=http://127.0.0.1:8788
+# SELF_URL=http://localhost:8787
+
+# Writing example requests and describing setups (any OpenAI-compatible chat API; Gemini's works).
+GEN_API_KEY=
+# GEN_BASE_URL=
+# GEN_MODEL=
+
+# LLMs through OpenRouter on this key (you can also paste one on the Upstreams page).
+OPENROUTER_API_KEY=

@@ -1,0 +1,46 @@
+# Dopp's Worker: the proxy (/v1/systemone), the API the dashboard uses (/api/*), the operator's sign-in (/auth/*), and the dashboard itself.
+#
+# Local (no Cloudflare account needed):   npm run dev          → http://localhost:8787, local D1 (SQLite) and local R2 in .wrangler/
+# Your own Cloudflare account:           see README.md "Deploy to your Cloudflare account"; replace every REPLACE_ME below.
+name = "dopp"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = true
+
+# The dashboard (built into ../dashboard/dist). Every path goes through the Worker first.
+[assets]
+binding = "ASSETS"
+directory = "../dashboard/dist"
+not_found_handling = "single-page-application"
+run_worker_first = true
+
+# Every 5 minutes: ping models whose owners asked to keep them awake.
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dopp"
+database_id = "REPLACE_ME"          # `npx wrangler d1 create dopp` prints it; local dev ignores it
+
+# Trained models' browser copies and offline folders. Keep this bucket private (no public access): the Worker serves its files
+# only to the route's owner.
+[[r2_buckets]]
+binding = "PRIVATE"
+bucket_name = "dopp-files"          # `npx wrangler r2 bucket create dopp-files`
+
+[vars]
+PRICE_MARGIN = "1"                  # cost shown on the Usage page = providers' list price times this
+# This server's address, where trained models' files (offline folders, browser copies) are sent back. It must be reachable by
+# whatever trains: from the internet for Modal; http://localhost:8787 for the local trainer (engines/tiny_local.py).
+# SELF_URL = "https://dopp.example.com"
+# JEV_URL = "https://api.typesafe.ai/v1/systemone"   # the built-in Jev connection; point it at any Jev-compatible server
+# Training and hosted models: the URLs `modal deploy engines/modal_*.py` prints (see README.md "Train with your own Modal").
+# Leave a family unset and the dashboard says its engine isn't deployed on this server.
+# ENGINE_URL = "https://<you>--dopp-engine-api.modal.run"
+# TINY_ENGINE_URL = "https://<you>--dopp-tiny-api.modal.run"
+# GLINER_ENGINE_URL = "https://<you>--dopp-gliner-api.modal.run"
+# GLINER_PREDICT_URL = "https://<you>--dopp-gliner-predict-web.modal.run"
+# KEV_ENGINE_URL = "https://<you>--dopp-kev-api.modal.run"
+# KEV_PREDICT_URL = "https://<you>--dopp-kev-predict-web.modal.run"
+# OPEN_PREDICT_URL = "https://<you>--dopp-open-open-web.modal.run"

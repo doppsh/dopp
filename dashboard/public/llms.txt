@@ -1,0 +1,7 @@
+# Dopp (self-hosted)
+
+A drop-in proxy for Jev-compatible decision APIs (POST /v1/systemone). Every request is kept as a training example; small open
+models trained on a route's requests can answer instead, with the original API as the fallback.
+
+- API reference: /docs.md
+- OpenAPI: /openapi.json
